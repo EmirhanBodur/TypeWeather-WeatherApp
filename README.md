@@ -8,6 +8,15 @@ Bu repo, React Native ve Expo kullanılarak geliştirilen bir hava durumu uygula
 - Çeşitli şehirler için hava durumu bilgileri.
 - Arayüz kullanımı kolay ve görsel olarak çekicidir.
 
+ ## API Kaynakları
+
+Bu uygulama, hava durumu bilgilerini almak için aşağıdaki harici API servisini kullanmaktadır:
+
+- **Weather API**
+  - **Website**: [WeatherAPI.com](https://www.weatherapi.com/)
+  - **Kullanım Amacı**: Uygulama, bu API aracılığıyla güncel hava durumu verilerini ve tahminleri alır.
+  - **API Anahtarı**: API ile etkileşim kurabilmek için gerekli olan API anahtarını almak için, [WeatherAPI.com](https://www.weatherapi.com/signup.aspx) üzerinde bir hesap oluşturmanız gerekmektedir.
+
 ## Kullanılan Teknolojiler
 
 Bu hava durumu uygulaması, aşağıdaki teknolojiler ve kütüphaneler kullanılarak geliştirilmiştir:
