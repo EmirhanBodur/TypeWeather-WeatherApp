@@ -7,7 +7,7 @@ import {
   TouchableOpacity,
   Image,
   StyleSheet,
-  StatusBar
+  StatusBar,
 } from 'react-native';
 import { MapPinIcon } from 'react-native-heroicons/outline';
 import { fetchLocations, fetchWeatherForecast } from '../api/weather';
@@ -15,18 +15,18 @@ import * as Progress from 'react-native-progress';
 import { debounce } from 'lodash';
 import { getData, storeData } from '../utils/asyncStroage';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import LogoComponent from './Logo';
 
 export default function Search({ route, navigation }) {
- 
   const [locations, setLocations] = useState([]);
   const [loading, setLoading] = useState(false);
   const fullName = route.params?.fullName;
 
   if (!fullName) {
-    // fullName tanımsızsa, kullanıcıyı bir hata mesajı ile bilgilendirin veya başka bir işlem yapın
     console.error('fullName parametresi tanımsız!');
     return;
   }
+
   useEffect(() => {
     async function fetchMyWeatherData() {
       const myCity = await getData('city') || 'Konya';
@@ -61,43 +61,45 @@ export default function Search({ route, navigation }) {
   }, 1200), []);
 
   return (
-    <View style={styles.container}>
-      <StatusBar style="auto" />
-      <Image source={require('../assets/bg.png')} style={styles.backgroundImage} />
-      <View style={styles.welcomeContainer}>
-        <View style={styles.headerContainer}>
-
-        <Text style={styles.welcomeText}>Welcome to </Text>
-        <Text style={styles.appName}>{fullName}</Text>
+    
+      <View style={styles.container}>
+        <StatusBar hidden={true} />
+        <Image source={require('../assets/bg.png')} style={styles.backgroundImage} />
+        <LogoComponent />
+        <View style={styles.welcomeContainer}>
+          <View style={styles.headerContainer}>
+            <Text style={styles.welcomeText}>Welcome to </Text>
+            <Text style={styles.appName}>{fullName}</Text>
+          </View>
+          <Text style={styles.instructions}>Choose a location to see the weather forecast</Text>
         </View>
-        <Text style={styles.instructions}>Choose a location to see the weather forecast</Text>
+        
+        {loading ? (
+          <Progress.CircleSnail thickness={10} size={140} color="#0bb3b2" />
+        ) : (
+          <SafeAreaView style={styles.searchContainer}>
+            <TextInput
+              style={styles.searchInput}
+              onChangeText={handleSearch}
+              placeholder="Search Location"
+              placeholderTextColor="#7F7F98"
+            />
+            {locations.length > 0 && (
+              <View style={styles.locationsList}>
+                {locations.map((loc, index) => (
+                  <TouchableOpacity key={index} style={styles.locationItem} onPress={() => handleLocation(loc)}>
+                    <MapPinIcon size={24} color="white" />
+                    <Text style={styles.locationText}>
+                      {loc?.name}, {loc?.country}
+                    </Text>
+                  </TouchableOpacity>
+                ))}
+              </View>
+            )}
+          </SafeAreaView>
+        )}
       </View>
-      
-      {loading ? (
-        <Progress.CircleSnail thickness={10} size={140} color="#0bb3b2" />
-      ) : (
-        <SafeAreaView style={styles.searchContainer}>
-          <TextInput
-            style={styles.searchInput}
-            onChangeText={handleSearch}
-            placeholder="Search Location"
-            placeholderTextColor="#7F7F98"
-          />
-          {locations.length > 0 && (
-            <View style={styles.locationsList}>
-              {locations.map((loc, index) => (
-                <TouchableOpacity key={index} style={styles.locationItem} onPress={() => handleLocation(loc)}>
-                  <MapPinIcon size={24} color="white" />
-                  <Text style={styles.locationText}>
-                    {loc?.name}, {loc?.country}
-                  </Text>
-                </TouchableOpacity>
-              ))}
-            </View>
-          )}
-        </SafeAreaView>
-      )}
-    </View>
+    
   );
 }
 

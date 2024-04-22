@@ -7,7 +7,6 @@ import {
   StyleSheet,
   Image,
   Platform,
-  Alert
 } from 'react-native';
 import { Dialog, Portal, Button } from 'react-native-paper';
 import { StatusBar } from 'expo-status-bar';
@@ -28,12 +27,35 @@ import {
   heightPercentageToDP as hp
 } from 'react-native-responsive-screen';
 
+
 function HomeScreen({ route, navigation }) {
-  const fullName = route.params?.fullName;
+  const [fullName, setFullName] = useState(route.params?.fullName);
   const [weather, setWeather] = useState({});
   const [loading, setLoading] = useState(false);
   const [dialogVisible, setDialogVisible] = useState(false);
-  const [city, setCity] = useState(''); 
+  const [city, setCity] = useState('');
+
+  useEffect(() => {
+    const fetchInitialData = async () => {
+      setLoading(true);
+      const savedCity = await getData('city') || 'DefaultCity';
+      setCity(savedCity);
+      const weatherData = await fetchWeatherForecast({ cityName: savedCity, days: '7' });
+      setWeather(weatherData);
+      setLoading(false);
+    };
+
+    fetchInitialData();
+  }, []);
+
+  useEffect(() => {
+    // AsyncStorage'den kullanıcı adını çek
+    getData('fullName').then(storedName => {
+      if (storedName) {
+        setFullName(storedName);
+      }
+    });
+  }, []);
 
   useEffect(() => {
     async function loadCityData() {
@@ -130,10 +152,10 @@ function HomeScreen({ route, navigation }) {
           <Dialog  visible={dialogVisible} onDismiss={handleCityChangeCancel}>
             <Dialog.Title>Change City</Dialog.Title>
             <Dialog.Content>
-              <Text>Your current city is {city}. Would you like to change it?</Text>
+              <Text style={{color:'black'}}>Your current city is {city}. Would you like to change it?</Text>
             </Dialog.Content>
             <Dialog.Actions>
-              <Button style={{Color:'white'}}  onPress={handleCityChangeConfirm}>Yes</Button>
+              <Button style={{Color:'black'}}  onPress={handleCityChangeConfirm}>Yes</Button>
               <Button onPress={handleCityChangeCancel}>No</Button>
             </Dialog.Actions>
           </Dialog>
@@ -146,15 +168,20 @@ function HomeScreen({ route, navigation }) {
           <View style={styles.imageContainer}>
             <Image source={require('../assets/ımage.png')} style={styles.backgroundImage} />
           </View>
-          <View style={styles.locationContainer}>
+                  <View style={styles.locationContainer}>
+          <View style={styles.locationLine}>
             <Text style={styles.locationText}>
-              {weather.location?.name}, {weather.location?.country}, {fullName}
+              {weather.location?.name},
             </Text>
-            <Text style={styles.dateText}>{formattedDate}</Text>
+            <Text style={styles.locationText}> {/* Sağa doğru 10 birim boşluk ekler */}
+              {weather.location?.country}
+            </Text>
           </View>
+          <Text style={[styles.locationText, styles.fullNameStyle]}>Hi, {fullName}</Text>
+          <Text style={styles.dateText}>{formattedDate}</Text>
+        </View>
           <View style={styles.temperatureContainer}>
             <Text style={styles.currentTemp}>{weather.current?.temp_c}º</Text>
-            <Text style={styles.rangeTemp}>26ºc / 32ºc</Text>
             <Text style={styles.condition}>{weather.current?.condition?.text}</Text>
           </View>
           <View style={styles.weatherIconContainer}>
@@ -199,7 +226,7 @@ function HomeScreen({ route, navigation }) {
     </View>
         
       <View style={styles.headerContainer}>
-        <CalendarDaysIcon size={22} color="white" />
+        <CalendarDaysIcon size={20} color="white" />
         <Text style={styles.headerText}>Daily Forecast</Text>
       </View> 
     <View style={styles.forecastContainer}>
@@ -238,11 +265,9 @@ function HomeScreen({ route, navigation }) {
       marginLeft: wp('3%'),
       borderRadius: 10,
       backgroundColor: '#16161F',
-    
-     
     },
     item: {
-      height: hp('8%'), // adjusted for text visibility
+      height: hp('8%'), 
       flexDirection: 'row',
       justifyContent: 'space-between',
       alignItems: 'center',
@@ -253,14 +278,14 @@ function HomeScreen({ route, navigation }) {
     },
     title: {
       fontWeight: 'bold',
-      fontSize: wp('3%'), // Adjust font size to your need
+      fontSize: wp('3%'), 
       color: '#cccccc',
       flexDirection: 'row',
       alignItems: 'center',
     },
     value: {
       fontWeight: 'bold',
-      fontSize: wp('4%'), // Adjust font size to your need
+      fontSize: wp('4%'), 
       color: 'white',
       marginRight: 3,
     },
@@ -309,7 +334,7 @@ function HomeScreen({ route, navigation }) {
     cardWeather: {
       backgroundColor: '#16161F',
       width: '100%',
-      height: hp('45%'), // Responsive height
+      height: hp('45%'), 
       paddingTop: wp('6%'),
       paddingLeft: wp('3%'),
       paddingRight: wp('3%'),
@@ -326,22 +351,28 @@ function HomeScreen({ route, navigation }) {
       alignItems: 'center',
     },
     backgroundImage: {
-      width: '95%', // Adjust the percentage as needed
-      height: '90%', // Adjust the percentage as needed
+      width: '95%', 
+      height: '90%', 
       borderRadius: 15,
     },
     locationContainer: {
-      
       top: wp('6%'),
       left: wp('6%'),
     },
+    fullNameStyle: {
+      marginTop: wp('2%'),  // Yükseklik cinsinden yüzdelik olarak üstten boşluk
+    },
+    locationLine: {
+      flexDirection: 'row',  // İçeriklerin yatay düzlemde sıralanmasını sağlar
+      alignItems: 'center'  // İçeriklerin dikey hizalanmasını sağlar
+    },
     locationText: {
-      color: 'white',
+      color: '#FAFAFA',
       fontSize: wp('4%'),
       fontWeight: 'bold',
     },
     dateText: {
-      color: 'white',
+      color: '#FAFAFA',
       fontSize: wp('3%'),
       marginTop: wp('1%'),
     },
@@ -352,19 +383,17 @@ function HomeScreen({ route, navigation }) {
     },
     currentTemp: {
       fontSize: wp('10%'),
+      
       fontWeight: 'bold',
-      color: 'white',
-    },
-    rangeTemp: {
-      fontSize: wp('3.5%'),
-      fontWeight: 'bold',
-      color: 'white',
-      paddingTop: hp('1%'),
+      color: '#FFFFFF',
     },
     condition: {
       fontSize: wp('3.5%'),
+      paddingLeft: wp('1%'),
+      paddingTop: wp('2%'),
       fontWeight: 'bold',
-      color: 'white',
+      color: '#FFFFFF',
+      
     },
     weatherIconContainer: {
       position:'absolute',

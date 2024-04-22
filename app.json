@@ -1,14 +1,14 @@
 {
   "expo": {
-    "name": "WeatherApp",
-    "slug": "WeatherApp",
+    "name": "TypeWeather",
+    "slug": "TypeWeather",
     "version": "1.0.0",
     "orientation": "portrait",
     "icon": "./assets/icon.png",
     "userInterfaceStyle": "light",
     "splash": {
-      "image": "./assets/icon.png",
-      "resizeMode": "contain",
+      "image": "./assets/splash.png",
+      "resizeMode": "cover",
       "backgroundColor": "#ffffff"
     },
     "assetBundlePatterns": [
@@ -19,17 +19,17 @@
     },
     "android": {
       "adaptiveIcon": {
-        "foregroundImage": "./assets/icon.png",
+        "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
-      "package": "com.emirhanbodurdev.WeatherApp"
+      "package": "com.emirhanbodurdev.TypeWeather"
     },
     "web": {
-      "favicon": "./assets/icon.png"
+      "favicon": "./assets/favicon.png"
     },
     "extra": {
       "eas": {
-        "projectId": "1ed9658f-2bae-4701-8424-aa5bdd764521"
+        "projectId": "40b402b5-6119-4a0c-8335-d3f1b049a344"
       }
     }
   }

@@ -1,18 +1,25 @@
 import React, { useCallback, useState } from 'react';
 import { View, Text, TextInput, TouchableOpacity, Image, StyleSheet, StatusBar } from 'react-native';
 import { widthPercentageToDP as wp, heightPercentageToDP as hp } from 'react-native-responsive-screen';
+import LogoComponent from './Logo';
+import { storeData } from '../utils/asyncStroage';
+
 
 function Name({ navigation }) {
   const [fullName, setFullName] = useState('');
 
-  const handleContinue = useCallback (() => {
-    navigation.navigate('Search', { fullName: fullName });
+
+  const handleContinue = useCallback(() => {
+    storeData('fullName', fullName).then(() => {
+      console.log('Name saved:', fullName);  // Kaydedilen adı konsolda göster
+      navigation.navigate('Search', { fullName: fullName });
+    }).catch(error => console.error('Failed to save name:', error));
   }, [fullName, navigation]);
 
   return (
     <View style={styles.container}>
       <Image source={require('../assets/bg.png')} style={styles.backgroundImage} />
-      
+      <LogoComponent />
       <View style={styles.contentContainer}>
         <View style={styles.messageContainer}>
           <View style={styles.welcomeContainer}>
@@ -24,24 +31,24 @@ function Name({ navigation }) {
 
         <TextInput
           style={styles.input}
-          placeholder="Adınızı ve Soyadınızı Giriniz"
+          placeholder="Enter Your Name and Surname"
           value={fullName}
           onChangeText={setFullName}
-          placeholderTextColor='#fff'
+          placeholderTextColor='#7F7F98'
         />
 
         {fullName !== '' ? (
           <TouchableOpacity onPress={handleContinue} style={styles.button}>
-            <Text style={styles.buttonText}>Devam et</Text>
+            <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
         ) : (
           <TouchableOpacity disabled={true} style={[styles.button, styles.buttonDisabled]}>
-            <Text style={styles.buttonText}>Devam et</Text>
+            <Text style={styles.buttonText}>Continue</Text>
           </TouchableOpacity>
         )}
       </View>
 
-      <StatusBar style='auto' />
+      <StatusBar hidden={true} />
     </View>
   );
 };
@@ -56,6 +63,24 @@ const styles = StyleSheet.create({
     position: 'absolute',
     height: '100%',
     width: '100%'
+  },
+  logo: {
+    position:'absolute',
+    alignItems:'center',
+    justifyContent: 'center',
+    width: wp('50%'), // Ekran genişliğinin %50'si
+    height: hp('4%'), // Ekran yüksekliğinin %4'ü
+    top: hp('6%'), // Ekran yüksekliğinin %6'sı kadar üstten boşluk
+    opacity: 0.6, // Şeffaflık değeri
+    flexDirection:'row'
+  },
+  logoText : {
+    color: '#FAFAFA',
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  vector : {
+    marginRight:4,
   },
   contentContainer: {
     alignItems: 'center',
@@ -80,29 +105,29 @@ const styles = StyleSheet.create({
     fontSize: wp('5%')
   },
   appNameText: {
-    color: '#8FB2F5', // Adjust color as needed
+    color: '#8FB2F5',
     fontSize: wp('5%')
   },
   instructionsText: {
     color: '#BFBFD4', // Adjust color as needed
     lineHeight: hp('2.5%'),
     textAlign: 'center',
-    fontSize: wp('4%')
+    fontSize: wp('4%'),
   },
   input: {
-    height: hp('7%'),
-    width: wp('80%'),
-    backgroundColor: '#1E1E29', // Adjust background color
+    height: hp('8%'),
+    width: wp('90%'),
+    backgroundColor: '#1E1E29',
     borderRadius: wp('2%'),
-    color: 'white',
-    paddingLeft: wp('2%')
+    paddingLeft: wp('4%'),
+    fontSize: wp('4%'),
+    color: '#fff'
   },
   button: {
     justifyContent: 'center',
     alignItems: 'center',
-    marginTop: hp('1.5%'),
     height: hp('7%'),
-    width: wp('80%'),
+    width: wp('90%'),
     borderRadius: wp('2%'),
     backgroundColor: '#1E1E29',
   },

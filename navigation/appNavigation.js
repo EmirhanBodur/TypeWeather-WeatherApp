@@ -4,6 +4,7 @@ import { createStackNavigator } from '@react-navigation/stack';
 import HomeScreen from "../screens/HomeScreen";
 import Name from '../screens/name'
 import Search from '../screens/search'
+import InitialScreen from '../screens/InitialScreen'
 import { LogBox } from "react-native";
 
 
@@ -16,10 +17,11 @@ LogBox.ignoreLogs([
 export default function AppNavigation() {
     return (
         <NavigationContainer> 
-            <Stack.Navigator initialRouteName='Name' screenOptions={{headerShown:false}}>
-                <Stack.Screen name="Home" component={HomeScreen} />
+            <Stack.Navigator initialRouteName='InitialScreen' screenOptions={{headerShown:false}}>
+                <Stack.Screen name="InitialScreen" component={InitialScreen} />
                 <Stack.Screen name="Name" component={Name} />
                 <Stack.Screen name="Search" component={Search} />
+                <Stack.Screen name="Home" component={HomeScreen} />
             </Stack.Navigator>
         </NavigationContainer>
     )
